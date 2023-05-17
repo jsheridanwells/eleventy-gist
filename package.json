@@ -1,0 +1,28 @@
+{
+  "name": "eleventy-gist",
+  "version": "1.0.0",
+  "description": "Render your Github gists in markdown",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsheridanwells/eleventy-gist.git"
+  },
+  "keywords": [
+    "gist",
+    "github",
+    "eleventy",
+    "plugin"
+  ],
+  "author": "@jsheridanwells",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsheridanwells/eleventy-gist/issues"
+  },
+  "homepage": "https://github.com/jsheridanwells/eleventy-gist#readme",
+  "devDependencies": {
+    "jest": "^29.5.0"
+  }
+}
