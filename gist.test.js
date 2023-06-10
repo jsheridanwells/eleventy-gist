@@ -22,7 +22,7 @@ const createAPIResponse = (fileName, contentText) =>
     })(fileName, contentText);
 
 const createOpts = () => {
-    return { authToken: '12345', userAgent: 'dave grohl' };
+    return { authToken: '12345', userAgent: 'dave grohl', useCache: false };
 };
 
 describe('gist() : ', () => {
@@ -98,5 +98,22 @@ describe('gist() : ', () => {
         const opts = createOpts();
         const result = await gist('12345', '01.docx', opts);
         expect(result).not.toContain('docs');
+    });
+
+    test('returns contents from cache', async () => {
+        const expected = '```bash \n echo hello > myfile.txt \n```';
+        const testObj = createAPIResponse('01.sh', ' echo hello > myfile.txt ').getResponse();
+        request.mockResolvedValue(testObj);
+        const opts = createOpts();
+        opts.useCache = true;
+        let result = await gist('12345', '01.sh', opts);
+        expect(result.replace(/\s/g, '')).toBe(expected.replace(/\s/g, ''));
+        result = await gist('12345', '01.sh', opts);
+        expect(result.replace(/\s/g, '')).toBe(expected.replace(/\s/g, ''));
+        expect(request).toHaveBeenCalledTimes(1);
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 });

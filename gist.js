@@ -1,3 +1,4 @@
+const cache = require('./cache');
 const request = require('./requestWrapper');
 
 /**
@@ -133,16 +134,27 @@ async function buildMdString(fileName, content) {
  * @returns {string}
  */
 async function run(gistId, fileName, opts) {
-    return await requestGist(gistId, opts)
+    if (opts.useCache) {
+        const content = cache.searchCache(gistId, fileName);
+        if (content) return content;
+    }
+
+    const content = await requestGist(gistId, opts)
         .then(apiResult => extractContent(apiResult, fileName))
         .then(contentResult => buildMdString(fileName, contentResult));
+
+    if (opts.useCache) {
+        return cache.setCache(gistId, fileName, content);
+    }
+
+    return content;
 }
 
 /**
  * Add a code snippet from Github Gists to a markdown template 
  * @param {string} gistId
  * @param {string} fileName
- * @param {{ authToken: string, userAgent: string }} opts
+ * @param {{ authToken: string, userAgent: string: useCache: boolean = false }} opts
  * @returns {string}
  */
 async function gist(gistId, fileName, opts) {
