@@ -24,6 +24,51 @@ module.exports = function(eleventyConfig) {
 }
 ```
 
+## Configuration
+The following configuration options are available:
+
+### authToken
+ - __type__: string
+ - __required__: yes
+ - __default?__: none
+
+This is your Github Gist API bearer token (see Installation and setup).
+
+### userAgent
+ - __type__: string
+ - __required__: yes
+ - __default?__: none
+
+This value gets passed to a `User-Agent` header when calling the Github Gist API.
+
+### useCache
+ - __type__: boolean
+ - __required__: no
+ - __default?__: false
+
+If set to true, caches the rendered Gist content after making a first call to the Github Gist API. It is recommended to set it to true while using an eleventy project in development to reduce build times and API traffic.
+
+### debug
+ - __type__: boolean
+ - __required__: no
+ - __default?__: false
+
+If set to true, if there are any errors returned while rendering your Gist, this will render the error in your Eleventy page. _Not recommended for production_. If set to false, eleventy-gist will just render an empty string.
+
+### Example config using environment variables:
+```javascript
+const config = {
+	authToken: process.env.github_access_token,
+	userAgent: process.env.github_user_agent,
+	debug: process.env.NODE_ENV === 'development', 
+	useCache: process.env.NODE_ENV === 'development'
+};
+
+module.exports = function(eleventyConfig) {
+    eleventyConfig.addPlugin(gist, config);
+}
+```
+
 ## Usage
 1. Use the `gist` shortcode as follows in Liquid or Nunjucks templates: 
 
