@@ -154,17 +154,38 @@ async function run(gistId, fileName, opts) {
  * Add a code snippet from Github Gists to a markdown template 
  * @param {string} gistId
  * @param {string} fileName
- * @param {{ authToken: string, userAgent: string: useCache: boolean = false }} opts
+ * @param {{ authToken: string, userAgent: string: useCache: boolean = false, debug: boolean = false }} opts
  * @returns {string}
  */
 async function gist(gistId, fileName, opts) {
+    if (!opts) {
+        throw new Error(`eleventy-gist error: please pass a valid configuration:
+            example: opts = {
+                authToken: '<MY_GITHUB_AUTH_TOKEN>',
+                userAgent: '<MY_USER_AGENT>',
+                useCache: true,
+                debug: false
+            };
+            gist('my-gist-id', 'my-file', opts);
+        `);
+    }
+    const debugMode = opts.debug;
     try {
         verifyOptions(opts);
         const result = await run(gistId, fileName, opts);
         return result;
     }
     catch (e) {
-        console.log('gist error: ', e.message);
+        if (e.message.includes('elevent-gist error')) {
+            throw new Error(e.message);
+        }
+
+        const errorMessage = `gist error: ${ e.message }`;
+        console.log(errorMessage);
+        if (debugMode) {
+            return `<p class="gist-error">${ errorMessage }</p>`;
+        }
+
         return '';
     }
 }
