@@ -2,7 +2,7 @@ const cache = require('./cache');
 const request = require('./requestWrapper');
 
 /**
- * Ensure gist has a Github auth token and user agent before calling the API
+ * Ensure configuration options are set up correctly
  * @param {{ authToken: string, userAgent: string }} opts
  * @returns {void}
  */
@@ -25,6 +25,11 @@ function verifyOptions(opts) {
     if (message && message.length > 0) {
         throw new Error(message);
     }
+
+    if (!opts.hasOwnProperty('addHiddenField')) {
+        opts['addHiddenField'] = false;
+    }
+    return opts;
 }
 
 /**
@@ -107,9 +112,10 @@ async function extractContent(githubGistResponse, fileName) {
  * Create a markdown code snippet to output to template 
  * @param {string} fileName
  * @param {string} content
+ * @param {boolean} addHiddenField
  * @returns {string}
  */
-async function buildMdString(fileName, content) {
+async function buildMdString(fileName, content, addHiddenField) {
     return new Promise((resolve, reject) => {
         try {
             let ext = '';
@@ -118,7 +124,11 @@ async function buildMdString(fileName, content) {
                 ext = lookupLanguage(ext);
             }
             
-            resolve('```' + ext + '\n' + content + '\n```');
+            let mdString = ('```' + ext + '\n' + content + '\n```');
+            if (addHiddenField) {
+                mdString += '\n<input type="hidden" value="' + content  +'" >';
+            }
+            resolve(mdString);
         }
         catch (e) {
             return reject(e);
@@ -141,7 +151,7 @@ async function run(gistId, fileName, opts) {
 
     const content = await requestGist(gistId, opts)
         .then(apiResult => extractContent(apiResult, fileName))
-        .then(contentResult => buildMdString(fileName, contentResult));
+        .then(contentResult => buildMdString(fileName, contentResult, opts.addHiddenField));
 
     if (opts.useCache) {
         return cache.setCache(gistId, fileName, content);
@@ -164,14 +174,15 @@ async function gist(gistId, fileName, opts) {
                 authToken: '<MY_GITHUB_AUTH_TOKEN>',
                 userAgent: '<MY_USER_AGENT>',
                 useCache: true,
-                debug: false
+                debug: false,
+                addHidden: false
             };
             gist('my-gist-id', 'my-file', opts);
         `);
     }
     const debugMode = opts.debug;
     try {
-        verifyOptions(opts);
+        opts = verifyOptions(opts);
         const result = await run(gistId, fileName, opts);
         return result;
     }
