@@ -140,7 +140,7 @@ describe('gist() : ', () => {
         const opts = createOpts();
         opts.addHiddenField = true;
         const result = await gist('12345', '01.sh', opts);
-        expect(result).toContain('<input type="hidden"');
+        expect(result).toContain('<pre class="eleventy-gist-raw-content" style="display:none">');
     });
 
     afterEach(() => {

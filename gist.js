@@ -59,10 +59,25 @@ function lookupLanguage(ext) {
 }
 
 /**
+ * Adds a hidden <pre> tag so that code from gist can be cleanly accessed
+ * @param {string} markdown 
+ * @param {string} rawContent 
+ * @returns {string}
+ */
+function addHiddenContentElement(markdown, rawContent) {
+    return markdown 
+    += '<pre class="eleventy-gist-raw-content" style="display:none">'
+        + '<code>'
+            + rawContent 
+        + '</code>'
+    + '</pre>';
+}
+
+/**
  * Call the Github API
  * @param {string} gistId
  * @param {{ authToken: string, userAgent: string }} opts
- * @returns {any} github api data
+ * @returns {any} Github api data
  */
 async function requestGist(gistId, opts) {
     try {
@@ -123,10 +138,10 @@ async function buildMdString(fileName, content, addHiddenField) {
                 ext = fileName.split('.').pop();
                 ext = lookupLanguage(ext);
             }
-            
-            let mdString = ('```' + ext + '\n' + content + '\n```');
+
+            let mdString = ('```' + ext + '\n' + content + '\n```\n');
             if (addHiddenField) {
-                mdString += '\n<input type="hidden" value="' + content  +'" >';
+                mdString = addHiddenContentElement(mdString, content);
             }
             resolve(mdString);
         }
@@ -175,7 +190,7 @@ async function gist(gistId, fileName, opts) {
                 userAgent: '<MY_USER_AGENT>',
                 useCache: true,
                 debug: false,
-                addHidden: false
+                addHiddenField: false
             };
             gist('my-gist-id', 'my-file', opts);
         `);
