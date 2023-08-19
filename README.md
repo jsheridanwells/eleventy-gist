@@ -61,14 +61,6 @@ When `debug` is true, any error messages get output to the page like below:
 ```
 The error messages can be selected with the `.gist-error` class.
 
-### addHiddenField
-_(v 1.2)_
- - __type__: boolean
- - __required__: no
- - __default?__: false
-
-If set to true, adds a hidden field next to the code block with the raw contents of the gist file. This can be useful for accessing the text of the code block without the extra elements that a syntax highlighter might add. (In my use case, it as for creating copy/paste feature).
-
 After the markdown engine renders the content, the resulting html will look something like this:
 ```html
 <pre>
@@ -87,8 +79,7 @@ const config = {
 	authToken: process.env.github_access_token,
 	userAgent: process.env.github_user_agent,
 	debug: process.env.NODE_ENV === 'development', 
-	useCache: process.env.NODE_ENV === 'development',
-	addHiddenField: true
+	useCache: process.env.NODE_ENV === 'development'
 };
 
 module.exports = function(eleventyConfig) {
