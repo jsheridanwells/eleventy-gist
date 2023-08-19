@@ -115,7 +115,7 @@ async function extractContent(githubGistResponse, fileName) {
  * @param {boolean} addHiddenField
  * @returns {string}
  */
-async function buildMdString(fileName, content, addHiddenField) {
+async function buildMdString(fileName, content) {
     return new Promise((resolve, reject) => {
         try {
             let ext = '';
@@ -125,9 +125,6 @@ async function buildMdString(fileName, content, addHiddenField) {
             }
             
             let mdString = ('```' + ext + '\n' + content + '\n```');
-            if (addHiddenField) {
-                mdString += '\n<input type="hidden" value="' + content  +'" >';
-            }
             resolve(mdString);
         }
         catch (e) {
@@ -151,7 +148,7 @@ async function run(gistId, fileName, opts) {
 
     const content = await requestGist(gistId, opts)
         .then(apiResult => extractContent(apiResult, fileName))
-        .then(contentResult => buildMdString(fileName, contentResult, opts.addHiddenField));
+        .then(contentResult => buildMdString(fileName, contentResult));
 
     if (opts.useCache) {
         return cache.setCache(gistId, fileName, content);
@@ -174,8 +171,7 @@ async function gist(gistId, fileName, opts) {
                 authToken: '<MY_GITHUB_AUTH_TOKEN>',
                 userAgent: '<MY_USER_AGENT>',
                 useCache: true,
-                debug: false,
-                addHidden: false
+                debug: false
             };
             gist('my-gist-id', 'my-file', opts);
         `);

@@ -1,6 +1,6 @@
 {
   "name": "eleventy-gist",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Render your Github gists in markdown",
   "main": "index.js",
   "scripts": {
