@@ -62,7 +62,7 @@ When `debug` is true, any error messages get output to the page like below:
 The error messages can be selected with the `.gist-error` class.
 
 ### addHiddenField
-_(v 1.2)_
+_(v 1.2.2)_
  - __type__: boolean
  - __required__: no
  - __default?__: false
@@ -76,8 +76,10 @@ After the markdown engine renders the content, the resulting html will look some
 		... a whole mess of special divs and classes to render the syntax highlighting
 	</code>
 </pre>
-<div>
-	<input type="hidden" value="... the raw contents of your gist.">
+<pre class="eleventy-gist-raw-content" style="display:none">
+	<code>
+        ... your raw content, hidden but available in the DOM ....
+	</code>
 </div>
 ```
 
